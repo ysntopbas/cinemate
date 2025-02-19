@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'register_page.dart';
 import 'home_page.dart';
 
@@ -64,6 +65,15 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                'CineMate',
+                style: GoogleFonts.fleurDeLeah(
+                  fontSize: 72,
+                  color: Theme.of(context).colorScheme.secondary,
+
+                ),
+              ),
+              const SizedBox(height: 32),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
@@ -95,18 +105,19 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 24),
               _isLoading
                   ? const CircularProgressIndicator()
-                  : ElevatedButton(
+                  : FilledButton(
                       onPressed: _login,
                       child: const Text('Giriş Yap'),
                     ),
               TextButton(
+
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const RegisterPage()),
                   );
                 },
-                child: const Text('Hesabınız yok mu? Kayıt olun'),
+                child:  Text('Hesabınız yok mu? Kayıt olun', style: TextStyle(color: Colors.yellow[700]),),
               ),
             ],
           ),

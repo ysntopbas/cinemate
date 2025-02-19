@@ -1,5 +1,7 @@
+import 'package:cinemate/screens/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -21,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Şifreler eşleşmiyor'),
-            backgroundColor: Colors.red,
+            
           ),
         );
         return;
@@ -41,7 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Kayıt başarılı!'),
-              backgroundColor: Colors.green,
             ),
           );
           Navigator.pop(context); // Login sayfasına dön
@@ -67,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kayıt Ol'),
+        title:  Text('Kayıt Ol'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -76,11 +77,18 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                'CineMate',
+                style: GoogleFonts.fleurDeLeah(
+                  fontSize: 72,                  
+                ),
+              ),
+              const SizedBox(height: 32),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'E-posta',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(),                  
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -94,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: _passwordController,
                 decoration: const InputDecoration(
                   labelText: 'Şifre',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(),                  
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -125,10 +133,20 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 24),
               _isLoading
                   ? const CircularProgressIndicator()
-                  : ElevatedButton(
+                  : FilledButton(
                       onPressed: _register,
-                      child: const Text('Kayıt Ol'),
+                      child:  Text('Kayıt Ol'),
                     ),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),                    
+                  );
+                },     
+                child:  
+                Text('Zaten hesabınız var mı? Giriş yapın.', style: TextStyle(color: Colors.yellow[700]),),
+              ),
             ],
           ),
         ),
