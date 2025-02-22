@@ -146,43 +146,45 @@ class TMDBService {
 
   Future<Map<String, dynamic>> searchContent(String query) async {
     try {
-      final Map<String, dynamic> movieParams = {
-        'language': 'tr-TR',
-        'query': query,
-        'region': 'TR',
-        'with_original_language': 'tr|en',
-      };
-
-      final Map<String, dynamic> tvParams = {
-        'language': 'tr-TR',
-        'query': query,
-        'region': 'TR',
-        'with_original_language': 'tr|en',
-      };
-
       final movieResponse = await _dio.get(
         '$_baseUrl/search/movie',
-        queryParameters: movieParams,
+        queryParameters: {
+          'language': 'tr-TR',
+          'query': query,
+          'with_original_language': 'tr|en',
+        },
       );
 
       final tvResponse = await _dio.get(
         '$_baseUrl/search/tv',
-        queryParameters: tvParams,
+        queryParameters: {
+          'language': 'tr-TR',
+          'query': query,
+          'with_original_language': 'tr|en',
+        },
       );
 
+      // 6 ve üzeri puanlı ve en az 100 oy almış filmler
       final List<Map<String, dynamic>> movies = List<Map<String, dynamic>>.from(
-        movieResponse.data['results'].where((item) {
-          return item['original_language'] == 'tr' || 
-                 item['original_language'] == 'en';
-        }),
+        movieResponse.data['results'].where((item) =>
+          (item['original_language'] == 'tr' || item['original_language'] == 'en') &&
+          (item['vote_average'] ?? 0) >= 6.0 &&
+          (item['vote_count'] ?? 0) >= 100
+        ),
       );
 
+      // 6 ve üzeri puanlı ve en az 100 oy almış diziler
       final List<Map<String, dynamic>> shows = List<Map<String, dynamic>>.from(
-        tvResponse.data['results'].where((item) {
-          return item['original_language'] == 'tr' || 
-                 item['original_language'] == 'en';
-        }),
+        tvResponse.data['results'].where((item) =>
+          (item['original_language'] == 'tr' || item['original_language'] == 'en') &&
+          (item['vote_average'] ?? 0) >= 6.0 &&
+          (item['vote_count'] ?? 0) >= 100
+        ),
       );
+
+      // Sonuçları puana göre sırala (yüksekten düşüğe)
+      movies.sort((a, b) => (b['vote_average'] ?? 0).compareTo(a['vote_average'] ?? 0));
+      shows.sort((a, b) => (b['vote_average'] ?? 0).compareTo(a['vote_average'] ?? 0));
 
       return {
         'movies': movies,
