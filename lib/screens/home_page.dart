@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'login_page.dart';
 import 'movies_page.dart';
 import 'tv_shows_page.dart';
+import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,6 +68,17 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const TVShowsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Ayarlar'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
                 );
               },
             ),
