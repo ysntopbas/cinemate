@@ -169,6 +169,7 @@ class TMDBService {
         'query': query,
         'include_adult': _includeAdult,
         'region': 'TR',
+        'with_original_language': 'tr|en',
       };
 
       final Map<String, dynamic> tvParams = {
@@ -176,6 +177,7 @@ class TMDBService {
         'query': query,
         'include_adult': _includeAdult,
         'region': 'TR',
+        'with_original_language': 'tr|en',
       };
 
       final movieResponse = await _dio.get(
@@ -190,7 +192,6 @@ class TMDBService {
 
       final List<Map<String, dynamic>> movies = List<Map<String, dynamic>>.from(
         movieResponse.data['results'].where((item) {
-          // Sadece Türkçe veya İngilizce içerikleri filtrele
           return item['original_language'] == 'tr' || 
                  item['original_language'] == 'en';
         }),
