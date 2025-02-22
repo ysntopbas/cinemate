@@ -125,21 +125,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   if (watchlist.isEmpty)
                     Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            size: 48,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'İzleme listenize film/dizi ekleyin',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        'Henüz izleme listenize film/dizi eklemediniz',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     )
                   else
@@ -185,21 +175,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   if (watchedList.isEmpty)
                     Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.add_circle_outline,
-                            size: 48,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'İzlediğiniz film/dizileri ekleyin',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        'Henüz izlediğiniz film/dizi eklemediniz',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     )
                   else

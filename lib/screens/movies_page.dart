@@ -14,6 +14,8 @@ class _MoviesPageState extends State<MoviesPage> {
   List<Map<String, dynamic>> _movies = [];
   bool _isLoading = true;
   bool _hasMore = true;
+  List<dynamic> watchlist = [];
+  List<dynamic> watchedList = [];
 
   @override
   void initState() {
@@ -22,6 +24,7 @@ class _MoviesPageState extends State<MoviesPage> {
   }
 
   Future<void> _loadMovies({bool reset = false}) async {
+
     if (reset) {
       setState(() {
         _movies = [];
@@ -103,55 +106,135 @@ class _MoviesPageState extends State<MoviesPage> {
                     ),
                   );
                 },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4),
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(4),
+                              ),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            movie['title'] ?? '',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.star,
-                                size: 16,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              const SizedBox(width: 4),
                               Text(
-                                '${(movie['vote_average'] ?? 0).toStringAsFixed(1)}',
+                                movie['title'] ?? '',
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${(movie['vote_average'] ?? 0).toStringAsFixed(1)}',
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Column(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              watchlist.contains(movie['id'])
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                final movieId = movie['id'];
+                                if (watchlist.contains(movieId)) {
+                                  watchlist.remove(movieId);
+                                } else {
+                                  watchlist.add(movieId);
+                                  watchedList.remove(movieId);
+                                }
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              watchedList.contains(movie['id'])
+                                  ? Icons.check_circle
+                                  : Icons.check_circle_outline,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                final movieId = movie['id'];
+                                if (watchedList.contains(movieId)) {
+                                  watchedList.remove(movieId);
+                                } else {
+                                  watchedList.add(movieId);
+                                  watchlist.remove(movieId);
+                                }
+                              });
+                            },
+                          ),
+                          if (watchedList.contains(movie['id'])) ...[
+                            IconButton(
+                              icon: Icon(
+                                Icons.thumb_up_outlined,
+                                color: movie['liked'] == true
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  movie['liked'] = true;
+                                  movie['disliked'] = false;
+                                });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.thumb_down_outlined,
+                                color: movie['disliked'] == true
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  movie['liked'] = false;
+                                  movie['disliked'] = true;
+                                });
+                              },
+                            ),
+                          ],
                         ],
                       ),
                     ),
