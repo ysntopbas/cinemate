@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login_page.dart';
+import 'movies_page.dart';
+import 'tv_shows_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,12 +32,11 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
               ),
-              child:               Text(
+              child: Text(
                 'CineMate',
                 style: GoogleFonts.fleurDeLeah(
                   fontSize: 72,
                   color: Theme.of(context).colorScheme.secondary,
-
                 ),
               ),
             ),
@@ -45,6 +46,28 @@ class _HomePageState extends State<HomePage> {
               selected: true,
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.movie),
+              title: const Text('Filmler'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MoviesPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.tv),
+              title: const Text('Diziler'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TVShowsPage()),
+                );
               },
             ),
             ListTile(

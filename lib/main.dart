@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/login_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const MyApp());
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    await dotenv.load(fileName: ".env");
+    runApp(const MyApp());
+  } catch (e) {
+    print("Hata: $e");
+    // Hata durumunda uygulamayı yine de başlat
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
