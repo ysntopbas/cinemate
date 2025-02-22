@@ -13,23 +13,6 @@ class _TVShowsPageState extends State<TVShowsPage> {
   List<Map<String, dynamic>> _tvShows = [];
   bool _isLoading = true;
   bool _hasMore = true;
-  String _currentSort = 'popularity.desc';
-  String _currentType = 'popular';
-
-  final Map<String, String> _filterOptions = {
-    'popular': 'Popüler Diziler',
-    'top_rated': 'En Çok Oy Alan Diziler',
-    'discover': 'Keşfet',
-  };
-
-  final Map<String, String> _sortOptions = {
-    'popularity.desc': 'Popülerlik (Azalan)',
-    'vote_average.desc': 'Puan (Yüksek → Düşük)',
-    'vote_average.asc': 'Puan (Düşük → Yüksek)',
-    'vote_count.desc': 'Oy Sayısı (Azalan)',
-    'first_air_date.desc': 'Yeni Çıkanlar',
-    'first_air_date.asc': 'Eski Çıkanlar',
-  };
 
   @override
   void initState() {
@@ -51,11 +34,7 @@ class _TVShowsPageState extends State<TVShowsPage> {
       _isLoading = true;
     });
 
-    final result = await _tmdbService.getTVShows(
-      type: _currentType,
-      sortBy: _currentSort,
-      voteAverageGte: _currentSort.contains('vote_average') ? 0.0 : null,
-    );
+    final result = await _tmdbService.getTVShows(type: 'top_rated');
     
     setState(() {
       if (reset) {
@@ -78,54 +57,7 @@ class _TVShowsPageState extends State<TVShowsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Diziler'),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            onSelected: (String value) {
-              setState(() {
-                _currentType = value;
-              });
-              _loadTVShows(reset: true);
-            },
-            itemBuilder: (BuildContext context) {
-              return _filterOptions.entries.map((entry) {
-                return PopupMenuItem<String>(
-                  value: entry.key,
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                );
-              }).toList();
-            },
-          ),
-          if (_currentType == 'discover')
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.sort),
-              onSelected: (String value) {
-                setState(() {
-                  _currentSort = value;
-                });
-                _loadTVShows(reset: true);
-              },
-              itemBuilder: (BuildContext context) {
-                return _sortOptions.entries.map((entry) {
-                  return PopupMenuItem<String>(
-                    value: entry.key,
-                    child: Text(
-                      entry.value,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                  );
-                }).toList();
-              },
-            ),
-        ],
+        title: const Text('En İyi Diziler'),
       ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {

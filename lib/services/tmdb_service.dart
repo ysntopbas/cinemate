@@ -1,28 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TMDBService {
   final Dio _dio = Dio();
   final String _baseUrl = 'https://api.themoviedb.org/3';
   int _currentMoviePage = 1;
   int _currentTVPage = 1;
-  bool _includeAdult = false;
 
   TMDBService() {
     _dio.options.headers['Authorization'] = 'Bearer ${dotenv.env['TMDB_ACCESS_TOKEN']}';
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    _includeAdult = prefs.getBool('include_adult') ?? false;
-  }
-
-  Future<void> setIncludeAdult(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('include_adult', value);
-    _includeAdult = value;
   }
 
   Future<Map<String, dynamic>> getMovies({
@@ -49,8 +35,6 @@ class TMDBService {
       final Map<String, dynamic> queryParams = {
         'language': 'tr-TR',
         'page': _currentMoviePage,
-        'include_adult': _includeAdult,
-        'with_original_language': 'tr|en',
       };
 
       if (type == 'discover') {
@@ -111,8 +95,6 @@ class TMDBService {
       final Map<String, dynamic> queryParams = {
         'language': 'tr-TR',
         'page': _currentTVPage,
-        'include_adult': _includeAdult,
-        'with_original_language': 'tr|en',
       };
 
       if (type == 'discover') {
@@ -167,7 +149,6 @@ class TMDBService {
       final Map<String, dynamic> movieParams = {
         'language': 'tr-TR',
         'query': query,
-        'include_adult': _includeAdult,
         'region': 'TR',
         'with_original_language': 'tr|en',
       };
@@ -175,7 +156,6 @@ class TMDBService {
       final Map<String, dynamic> tvParams = {
         'language': 'tr-TR',
         'query': query,
-        'include_adult': _includeAdult,
         'region': 'TR',
         'with_original_language': 'tr|en',
       };
