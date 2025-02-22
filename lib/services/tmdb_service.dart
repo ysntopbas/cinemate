@@ -50,6 +50,7 @@ class TMDBService {
         'language': 'tr-TR',
         'page': _currentMoviePage,
         'include_adult': _includeAdult,
+        'with_original_language': 'tr|en',
       };
 
       if (type == 'discover') {
@@ -67,8 +68,15 @@ class TMDBService {
         queryParameters: queryParams,
       );
       
+      final List<Map<String, dynamic>> filteredResults = 
+        List<Map<String, dynamic>>.from(response.data['results'])
+          .where((movie) => 
+            movie['original_language'] == 'tr' || 
+            movie['original_language'] == 'en')
+          .toList();
+      
       return {
-        'movies': List<Map<String, dynamic>>.from(response.data['results']),
+        'movies': filteredResults,
         'hasMore': response.data['page'] < response.data['total_pages'],
         'currentPage': response.data['page'],
         'totalPages': response.data['total_pages'],
@@ -104,6 +112,7 @@ class TMDBService {
         'language': 'tr-TR',
         'page': _currentTVPage,
         'include_adult': _includeAdult,
+        'with_original_language': 'tr|en',
       };
 
       if (type == 'discover') {
@@ -121,8 +130,15 @@ class TMDBService {
         queryParameters: queryParams,
       );
       
+      final List<Map<String, dynamic>> filteredResults = 
+        List<Map<String, dynamic>>.from(response.data['results'])
+          .where((show) => 
+            show['original_language'] == 'tr' || 
+            show['original_language'] == 'en')
+          .toList();
+      
       return {
-        'shows': List<Map<String, dynamic>>.from(response.data['results']),
+        'shows': filteredResults,
         'hasMore': response.data['page'] < response.data['total_pages'],
         'currentPage': response.data['page'],
         'totalPages': response.data['total_pages'],
@@ -144,5 +160,56 @@ class TMDBService {
   void resetPages() {
     _currentMoviePage = 1;
     _currentTVPage = 1;
+  }
+
+  Future<Map<String, dynamic>> searchContent(String query) async {
+    try {
+      final Map<String, dynamic> movieParams = {
+        'language': 'tr-TR',
+        'query': query,
+        'include_adult': _includeAdult,
+        'region': 'TR',
+      };
+
+      final Map<String, dynamic> tvParams = {
+        'language': 'tr-TR',
+        'query': query,
+        'include_adult': _includeAdult,
+        'region': 'TR',
+      };
+
+      final movieResponse = await _dio.get(
+        '$_baseUrl/search/movie',
+        queryParameters: movieParams,
+      );
+
+      final tvResponse = await _dio.get(
+        '$_baseUrl/search/tv',
+        queryParameters: tvParams,
+      );
+
+      final List<Map<String, dynamic>> movies = List<Map<String, dynamic>>.from(
+        movieResponse.data['results'].where((item) {
+          // Sadece Türkçe veya İngilizce içerikleri filtrele
+          return item['original_language'] == 'tr' || 
+                 item['original_language'] == 'en';
+        }),
+      );
+
+      final List<Map<String, dynamic>> shows = List<Map<String, dynamic>>.from(
+        tvResponse.data['results'].where((item) {
+          return item['original_language'] == 'tr' || 
+                 item['original_language'] == 'en';
+        }),
+      );
+
+      return {
+        'movies': movies,
+        'shows': shows,
+      };
+    } catch (e) {
+      print('Error searching content: $e');
+      return {'movies': [], 'shows': []};
+    }
   }
 } 
