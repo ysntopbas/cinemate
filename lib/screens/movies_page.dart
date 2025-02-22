@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/tmdb_service.dart';
+import '../screens/content_details_page.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({super.key});
@@ -90,59 +91,72 @@ class _MoviesPageState extends State<MoviesPage> {
             final movie = _movies[index];
             return Card(
               elevation: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(4),
-                        ),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContentDetailsPage(
+                        content: movie,
+                        isMovie: true,
+                      ),
+                    ),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4),
                           ),
-                          fit: BoxFit.cover,
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                            ),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          movie['title'] ?? '',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            movie['title'] ?? '',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${(movie['vote_average'] ?? 0).toStringAsFixed(1)}',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                size: 16,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 4),
+                              Text(
+                                '${(movie['vote_average'] ?? 0).toStringAsFixed(1)}',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },

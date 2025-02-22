@@ -195,4 +195,70 @@ class TMDBService {
       return {'movies': [], 'shows': []};
     }
   }
+
+  Future<Map<String, dynamic>?> getMovieDetails(int movieId) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/movie/$movieId',
+        queryParameters: {
+          'language': 'tr-TR',
+          'append_to_response': 'credits,videos,similar,genres',
+        },
+      );
+
+      // Türleri çekelim
+      final genreResponse = await _dio.get(
+        '$_baseUrl/genre/movie/list',
+        queryParameters: {
+          'language': 'tr-TR',
+        },
+      );
+
+      // Response'a türleri ekleyelim
+      final data = response.data;
+      data['genre_names'] = (data['genres'] as List?)?.map((genre) {
+        final genreName = (genreResponse.data['genres'] as List)
+            .firstWhere((g) => g['id'] == genre['id'], orElse: () => {'name': ''})['name'];
+        return genreName;
+      }).toList();
+
+      return data;
+    } catch (e) {
+      print('Error getting movie details: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getTVShowDetails(int tvId) async {
+    try {
+      final response = await _dio.get(
+        '$_baseUrl/tv/$tvId',
+        queryParameters: {
+          'language': 'tr-TR',
+          'append_to_response': 'credits,videos,similar,genres',
+        },
+      );
+
+      // Türleri çekelim
+      final genreResponse = await _dio.get(
+        '$_baseUrl/genre/tv/list',
+        queryParameters: {
+          'language': 'tr-TR',
+        },
+      );
+
+      // Response'a türleri ekleyelim
+      final data = response.data;
+      data['genre_names'] = (data['genres'] as List?)?.map((genre) {
+        final genreName = (genreResponse.data['genres'] as List)
+            .firstWhere((g) => g['id'] == genre['id'], orElse: () => {'name': ''})['name'];
+        return genreName;
+      }).toList();
+
+      return data;
+    } catch (e) {
+      print('Error getting TV show details: $e');
+      return null;
+    }
+  }
 } 
