@@ -191,6 +191,7 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                       watchListProvider.toggleWatchlist(show['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
+                                          duration: const Duration(milliseconds: 800),
                                           content: Text(
                                             watchListProvider.isInWatchlist(show['id'])
                                                 ? 'İzleme listesine kaydedildi'
@@ -218,10 +219,11 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                       watchListProvider.toggleWatched(show['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
+                                          duration: const Duration(milliseconds: 800),
                                           content: Text(
-                                            watchedList.contains(show['id'])
-                                                ? 'İzlediklerimden çıkarıldı'
-                                                : 'İzlediklerime eklendi',
+                                            watchListProvider.isWatched(show['id'])
+                                                ? 'İzlediklerime eklendi'
+                                                : 'İzlediklerimden çıkarıldı',
                                           ),
                                         ),
                                       );

@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import '../services/tmdb_service.dart';
 import '../screens/content_details_page.dart';
@@ -195,9 +197,14 @@ class _MoviesPageState extends State<MoviesPage> {
                                             watchListProvider.isInWatchlist(movie['id'])
                                                 ? 'İzleme listesine kaydedildi'
                                                 : 'İzleme listesinden çıkarıldı',
+
                                           ),
+                                        
                                         ),
                                       );
+                                      
+                                      print("movie ${movie['id']}");
+                                      print("watchlist ${watchListProvider.watchlist}");
                                     },
                                   ),
                                 ),
@@ -226,6 +233,8 @@ class _MoviesPageState extends State<MoviesPage> {
                                           ),
                                         ),
                                       );
+                                      print("movie ${movie['id']}");
+                                      print("watchedList ${watchListProvider.watchedList}");
                                     },
                                   ),
                                 ),
