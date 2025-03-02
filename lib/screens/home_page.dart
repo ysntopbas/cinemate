@@ -1,4 +1,3 @@
-
 import 'package:cinemate/providers/watch_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,7 +104,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // İzleme Listesi Bölümü
+            // İzleme Listesi Bölümü (Filmler)
             Text(
               'İzleme Listesi (Filmler)',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -189,7 +188,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 24),
 
-            // İzlediklerim Listesi Bölümü
+            // İzlediklerim Listesi Bölümü (Filmler)
             Text(
               'İzlediklerim (Filmler)',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -273,10 +272,175 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 24),
 
-            // Diziler için benzer bölümler ekleyin...
+            // İzleme Listesi Bölümü (Diziler)
+            Text(
+              'İzleme Listesi (Diziler)',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            // Dizi izleme listesi
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  if (watchListProvider.tvShowWatchlist.isEmpty)
+                    Center(
+                      child: Text(
+                        'Henüz izleme listenize dizi eklemediniz',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: watchListProvider.tvShowWatchlist.length,
+                      itemBuilder: (context, index) {
+                        final tvShowId = watchListProvider.tvShowWatchlist[index];
+                        return FutureBuilder<Map<String, dynamic>?>(
+                          future: TMDBService().getTVShowDetails(tvShowId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError || snapshot.data == null) {
+                              return const Text('Hata oluştu');
+                            }
+                            final tvShow = snapshot.data!;
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailsPage(
+                                      content: tvShow,
+                                      isMovie: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    Image.network(
+                                      'https://image.tmdb.org/t/p/w500${tvShow['poster_path']}',
+                                      width: 100,
+                                      height: 150,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(tvShow['name'] ?? ''),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // İzlediklerim Listesi Bölümü (Diziler)
+            Text(
+              'İzlediklerim (Diziler)',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            // İzlenmiş dizi listesi
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                children: [
+                  if (watchListProvider.watchedTVShows.isEmpty)
+                    Center(
+                      child: Text(
+                        'Henüz izlediğiniz dizi eklemediniz',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: watchListProvider.watchedTVShows.length,
+                      itemBuilder: (context, index) {
+                        final tvShowId = watchListProvider.watchedTVShows[index];
+                        return FutureBuilder<Map<String, dynamic>?>(
+                          future: TMDBService().getTVShowDetails(tvShowId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError || snapshot.data == null) {
+                              return const Text('Hata oluştu');
+                            }
+                            final tvShow = snapshot.data!;
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailsPage(
+                                      content: tvShow,
+                                      isMovie: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    Image.network(
+                                      'https://image.tmdb.org/t/p/w500${tvShow['poster_path']}',
+                                      width: 100,
+                                      height: 150,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(tvShow['name'] ?? ''),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-} 
+}
