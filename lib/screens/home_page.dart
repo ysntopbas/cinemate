@@ -1,3 +1,4 @@
+
 import 'package:cinemate/providers/watch_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,11 +19,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> watchlist = [];
-  final List<String> watchedList = [];
-  bool isWatchlistExpanded = false;
-  bool isWatchedExpanded = false;
-
   @override
   Widget build(BuildContext context) {
     final watchListProvider = Provider.of<WatchListProvider>(context);
@@ -111,12 +107,13 @@ class _HomePageState extends State<HomePage> {
           children: [
             // İzleme Listesi Bölümü
             Text(
-              'İzleme Listesi',
+              'İzleme Listesi (Filmler)',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
             ),
             const SizedBox(height: 8),
+            // Film izleme listesi
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -129,10 +126,10 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchListProvider.watchlist.isEmpty)
+                  if (watchListProvider.movieWatchlist.isEmpty)
                     Center(
                       child: Text(
-                        'Henüz izleme listenize film/dizi eklemediniz',
+                        'Henüz izleme listenize film eklemediniz',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -142,9 +139,9 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: watchListProvider.watchlist.length,
+                      itemCount: watchListProvider.movieWatchlist.length,
                       itemBuilder: (context, index) {
-                        final movieId = watchListProvider.watchlist[index];
+                        final movieId = watchListProvider.movieWatchlist[index];
                         return FutureBuilder<Map<String, dynamic>?>(
                           future: TMDBService().getMovieDetails(movieId),
                           builder: (context, snapshot) {
@@ -191,15 +188,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // İzlediklerim Listesi Bölümü
             Text(
-              'İzlediklerim',
+              'İzlediklerim (Filmler)',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
             ),
             const SizedBox(height: 8),
+            // İzlenmiş film listesi
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -212,10 +210,10 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchListProvider.watchedList.isEmpty)
+                  if (watchListProvider.watchedMovies.isEmpty)
                     Center(
                       child: Text(
-                        'Henüz izlediğiniz film/dizi eklemediniz',
+                        'Henüz izlediğiniz film eklemediniz',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -225,11 +223,11 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: watchListProvider.watchedList.length,
+                      itemCount: watchListProvider.watchedMovies.length,
                       itemBuilder: (context, index) {
-                        final showId = watchListProvider.watchedList[index];
+                        final movieId = watchListProvider.watchedMovies[index];
                         return FutureBuilder<Map<String, dynamic>?>(
-                          future: TMDBService().getTVShowDetails(showId),
+                          future: TMDBService().getMovieDetails(movieId),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return const CircularProgressIndicator();
@@ -237,15 +235,15 @@ class _HomePageState extends State<HomePage> {
                             if (snapshot.hasError || snapshot.data == null) {
                               return const Text('Hata oluştu');
                             }
-                            final show = snapshot.data!;
+                            final movie = snapshot.data!;
                             return GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ContentDetailsPage(
-                                      content: show,
-                                      isMovie: false,
+                                      content: movie,
+                                      isMovie: true,
                                     ),
                                   ),
                                 );
@@ -254,13 +252,13 @@ class _HomePageState extends State<HomePage> {
                                 child: Row(
                                   children: [
                                     Image.network(
-                                      'https://image.tmdb.org/t/p/w500${show['poster_path']}',
+                                      'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
                                       width: 100,
                                       height: 150,
                                     ),
                                     const SizedBox(width: 10),
                                     Expanded(
-                                      child: Text(show['name'] ?? ''),
+                                      child: Text(movie['title'] ?? ''),
                                     ),
                                   ],
                                 ),
@@ -273,6 +271,9 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Diziler için benzer bölümler ekleyin...
           ],
         ),
       ),

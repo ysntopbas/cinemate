@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import '../services/tmdb_service.dart';
 import '../screens/content_details_page.dart';
@@ -183,28 +181,23 @@ class _MoviesPageState extends State<MoviesPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      watchListProvider.isInWatchlist(movie['id'])
+                                      watchListProvider.isInMovieWatchlist(movie['id'])
                                           ? Icons.bookmark
                                           : Icons.bookmark_border,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
-                                      watchListProvider.toggleWatchlist(movie['id']);
+                                      watchListProvider.toggleMovieWatchlist(movie['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           duration: const Duration(milliseconds: 800),
                                           content: Text(
-                                            watchListProvider.isInWatchlist(movie['id'])
+                                            watchListProvider.isInMovieWatchlist(movie['id'])
                                                 ? 'İzleme listesine kaydedildi'
                                                 : 'İzleme listesinden çıkarıldı',
-
                                           ),
-                                        
                                         ),
                                       );
-                                      
-                                      print("movie ${movie['id']}");
-                                      print("watchlist ${watchListProvider.watchlist}");
                                     },
                                   ),
                                 ),
@@ -216,29 +209,27 @@ class _MoviesPageState extends State<MoviesPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      watchedList.contains(movie['id'])
+                                      watchListProvider.isWatchedMovie(movie['id'])
                                           ? Icons.check_circle
                                           : Icons.check_circle_outline,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
-                                      watchListProvider.toggleWatched(movie['id']);
+                                      watchListProvider.toggleWatchedMovie(movie['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           duration: const Duration(milliseconds: 800),
                                           content: Text(
-                                            watchListProvider.isWatched(movie['id'])
+                                            watchListProvider.isWatchedMovie(movie['id'])
                                                 ? 'İzlediklerime eklendi'
                                                 : 'İzlediklerimden çıkarıldı',
                                           ),
                                         ),
                                       );
-                                      print("movie ${movie['id']}");
-                                      print("watchedList ${watchListProvider.watchedList}");
                                     },
                                   ),
                                 ),
-                                if (watchListProvider.isWatched(movie['id'])) ...[
+                                if (watchListProvider.isWatchedMovie(movie['id'])) ...[
                                   const SizedBox(height: 4),
                                   Container(
                                     decoration: BoxDecoration(

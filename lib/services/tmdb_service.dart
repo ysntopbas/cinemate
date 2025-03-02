@@ -66,7 +66,6 @@ class TMDBService {
         'totalPages': response.data['total_pages'],
       };
     } catch (e) {
-      print('Error getting movies: $e');
       return {'movies': [], 'hasMore': false, 'currentPage': 1, 'totalPages': 1};
     }
   }
@@ -126,7 +125,6 @@ class TMDBService {
         'totalPages': response.data['total_pages'],
       };
     } catch (e) {
-      print('Error getting TV shows: $e');
       return {'shows': [], 'hasMore': false, 'currentPage': 1, 'totalPages': 1};
     }
   }
@@ -191,7 +189,6 @@ class TMDBService {
         'shows': shows,
       };
     } catch (e) {
-      print('Error searching content: $e');
       return {'movies': [], 'shows': []};
     }
   }
@@ -205,10 +202,8 @@ class TMDBService {
           'append_to_response': 'credits,videos,similar,genres',
         },
       );
-      print(response.data); // API yanıtını konsola yazdır
       return response.data;
     } catch (e) {
-      print('Error getting movie details: $e');
       return null;
     }
   }
@@ -241,7 +236,6 @@ class TMDBService {
 
       return data;
     } catch (e) {
-      print('Error getting TV show details: $e');
       return null;
     }
   }

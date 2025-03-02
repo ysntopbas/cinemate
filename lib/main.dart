@@ -14,7 +14,7 @@ void main() async {
     await dotenv.load(fileName: ".env");
     runApp(const MyApp());
   } catch (e) {
-    print("Hata: $e");
+    
     // Hata durumunda uygulamayı yine de başlat
     runApp(const MyApp());
   }

@@ -16,8 +16,6 @@ class _TVShowsPageState extends State<TVShowsPage> {
   List<Map<String, dynamic>> _tvShows = [];
   bool _isLoading = true;
   bool _hasMore = true;
-  List<dynamic> watchlist = [];
-  List<dynamic> watchedList = [];
   late WatchListProvider _watchListProvider;
 
   @override
@@ -28,7 +26,6 @@ class _TVShowsPageState extends State<TVShowsPage> {
   }
 
   Future<void> _loadTVShows({bool reset = false}) async {
-
     if (reset) {
       setState(() {
         _tvShows = [];
@@ -43,7 +40,7 @@ class _TVShowsPageState extends State<TVShowsPage> {
     });
 
     final result = await _tmdbService.getTVShows(type: 'top_rated');
-    
+
     setState(() {
       if (reset) {
         _tvShows = List<Map<String, dynamic>>.from(result['shows']);
@@ -182,18 +179,18 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      watchListProvider.isInWatchlist(show['id'])
+                                      watchListProvider.isInTVShowWatchlist(show['id'])
                                           ? Icons.bookmark
                                           : Icons.bookmark_border,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
-                                      watchListProvider.toggleWatchlist(show['id']);
+                                      watchListProvider.toggleTVShowWatchlist(show['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           duration: const Duration(milliseconds: 800),
                                           content: Text(
-                                            watchListProvider.isInWatchlist(show['id'])
+                                            watchListProvider.isInTVShowWatchlist(show['id'])
                                                 ? 'İzleme listesine kaydedildi'
                                                 : 'İzleme listesinden çıkarıldı',
                                           ),
@@ -210,18 +207,18 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      watchedList.contains(show['id'])
+                                      watchListProvider.isWatchedTVShow(show['id'])
                                           ? Icons.check_circle
                                           : Icons.check_circle_outline,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
-                                      watchListProvider.toggleWatched(show['id']);
+                                      watchListProvider.toggleWatchedTVShow(show['id']);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           duration: const Duration(milliseconds: 800),
                                           content: Text(
-                                            watchListProvider.isWatched(show['id'])
+                                            watchListProvider.isWatchedTVShow(show['id'])
                                                 ? 'İzlediklerime eklendi'
                                                 : 'İzlediklerimden çıkarıldı',
                                           ),
@@ -230,7 +227,7 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                     },
                                   ),
                                 ),
-                                if (watchListProvider.isWatched(show['id'])) ...[
+                                if (watchListProvider.isWatchedTVShow(show['id'])) ...[
                                   const SizedBox(height: 4),
                                   Container(
                                     decoration: BoxDecoration(

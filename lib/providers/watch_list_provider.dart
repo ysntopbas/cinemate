@@ -1,37 +1,65 @@
 import 'package:flutter/foundation.dart';
 
 class WatchListProvider with ChangeNotifier {
-  final List<int> _watchlist = [];
-  final List<int> _watchedList = [];
+  final List<int> _movieWatchlist = [];
+  final List<int> _tvShowWatchlist = [];
+  final List<int> _watchedMovies = [];
+  final List<int> _watchedTVShows = [];
   final Map<int, bool> _likedContent = {};
   final Map<int, bool> _dislikedContent = {};
 
-  List<int> get watchlist => _watchlist;
-  List<int> get watchedList => _watchedList;
+  List<int> get movieWatchlist => _movieWatchlist;
+  List<int> get tvShowWatchlist => _tvShowWatchlist;
+  List<int> get watchedMovies => _watchedMovies;
+  List<int> get watchedTVShows => _watchedTVShows;
 
-  bool isInWatchlist(int id) => _watchlist.contains(id);
-  bool isWatched(int id) => _watchedList.contains(id);
+  bool isInMovieWatchlist(int id) => _movieWatchlist.contains(id);
+  bool isInTVShowWatchlist(int id) => _tvShowWatchlist.contains(id);
+  bool isWatchedMovie(int id) => _watchedMovies.contains(id);
+  bool isWatchedTVShow(int id) => _watchedTVShows.contains(id);
   bool isLiked(int id) => _likedContent[id] ?? false;
   bool isDisliked(int id) => _dislikedContent[id] ?? false;
 
-  void toggleWatchlist(int id) {
-    if (_watchlist.contains(id)) {
-      _watchlist.remove(id);
+  void toggleMovieWatchlist(int id) {
+    if (_movieWatchlist.contains(id)) {
+      _movieWatchlist.remove(id);
     } else {
-      _watchlist.add(id);
-      _watchedList.remove(id);
+      _movieWatchlist.add(id);
+      _tvShowWatchlist.remove(id);
     }
     notifyListeners();
   }
 
-  void toggleWatched(int id) {
-    if (_watchedList.contains(id)) {
-      _watchedList.remove(id);
+  void toggleTVShowWatchlist(int id) {
+    if (_tvShowWatchlist.contains(id)) {
+      _tvShowWatchlist.remove(id);
+    } else {
+      _tvShowWatchlist.add(id);
+      _movieWatchlist.remove(id);
+    }
+    notifyListeners();
+  }
+
+  void toggleWatchedMovie(int id) {
+    if (_watchedMovies.contains(id)) {
+      _watchedMovies.remove(id);
       _likedContent.remove(id);
       _dislikedContent.remove(id);
     } else {
-      _watchedList.add(id);
-      _watchlist.remove(id);
+      _watchedMovies.add(id);
+      _movieWatchlist.remove(id);
+    }
+    notifyListeners();
+  }
+
+  void toggleWatchedTVShow(int id) {
+    if (_watchedTVShows.contains(id)) {
+      _watchedTVShows.remove(id);
+      _likedContent.remove(id);
+      _dislikedContent.remove(id);
+    } else {
+      _watchedTVShows.add(id);
+      _tvShowWatchlist.remove(id);
     }
     notifyListeners();
   }
