@@ -188,6 +188,16 @@ class _MoviesPageState extends State<MoviesPage> {
                                     ),
                                     onPressed: () {
                                       watchListProvider.toggleWatchlist(movie['id']);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          duration: const Duration(milliseconds: 800),
+                                          content: Text(
+                                            watchListProvider.isInWatchlist(movie['id'])
+                                                ? 'İzleme listesine kaydedildi'
+                                                : 'İzleme listesinden çıkarıldı',
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),
@@ -199,11 +209,23 @@ class _MoviesPageState extends State<MoviesPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      Icons.check_circle,
+                                      watchedList.contains(movie['id'])
+                                          ? Icons.check_circle
+                                          : Icons.check_circle_outline,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
                                       watchListProvider.toggleWatched(movie['id']);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          duration: const Duration(milliseconds: 800),
+                                          content: Text(
+                                            watchListProvider.isWatched(movie['id'])
+                                                ? 'İzlediklerime eklendi'
+                                                : 'İzlediklerimden çıkarıldı',
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),

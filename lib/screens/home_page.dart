@@ -1,3 +1,4 @@
+import 'package:cinemate/providers/watch_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,6 +6,9 @@ import 'login_page.dart';
 import 'movies_page.dart';
 import 'tv_shows_page.dart';
 import 'search_page.dart';
+import 'package:provider/provider.dart';
+import 'package:cinemate/services/tmdb_service.dart';
+import 'content_details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +25,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final watchListProvider = Provider.of<WatchListProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ana Sayfa'),
@@ -98,7 +104,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchlist.isEmpty)
+                  if (watchListProvider.watchlist.isEmpty)
                     Center(
                       child: Text(
                         'Henüz izleme listenize film/dizi eklemediniz',
@@ -136,15 +142,48 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: watchlist.length,
+                      itemCount: watchListProvider.watchlist.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            watchlist[index],
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
+                        final movieId = watchListProvider.watchlist[index];
+                        return FutureBuilder<Map<String, dynamic>?>(
+                          future: TMDBService().getMovieDetails(movieId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError || snapshot.data == null) {
+                              return const Text('Hata oluştu');
+                            }
+                            final movie = snapshot.data!;
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailsPage(
+                                      content: movie,
+                                      isMovie: true,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    Image.network(
+                                      'https://image.tmdb.org/t/p/w500${movie['poster_path']}',
+                                      width: 100,
+                                      height: 150,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(movie['title'] ?? ''),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -173,7 +212,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchedList.isEmpty)
+                  if (watchListProvider.watchedList.isEmpty)
                     Center(
                       child: Text(
                         'Henüz izlediğiniz film/dizi eklemediniz',
@@ -186,15 +225,48 @@ class _HomePageState extends State<HomePage> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: watchedList.length,
+                      itemCount: watchListProvider.watchedList.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            watchedList[index],
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
+                        final showId = watchListProvider.watchedList[index];
+                        return FutureBuilder<Map<String, dynamic>?>(
+                          future: TMDBService().getTVShowDetails(showId),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (snapshot.hasError || snapshot.data == null) {
+                              return const Text('Hata oluştu');
+                            }
+                            final show = snapshot.data!;
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ContentDetailsPage(
+                                      content: show,
+                                      isMovie: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Row(
+                                  children: [
+                                    Image.network(
+                                      'https://image.tmdb.org/t/p/w500${show['poster_path']}',
+                                      width: 100,
+                                      height: 150,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(show['name'] ?? ''),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

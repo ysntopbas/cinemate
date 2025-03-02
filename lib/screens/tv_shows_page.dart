@@ -189,6 +189,15 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                     ),
                                     onPressed: () {
                                       watchListProvider.toggleWatchlist(show['id']);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            watchListProvider.isInWatchlist(show['id'])
+                                                ? 'İzleme listesine kaydedildi'
+                                                : 'İzleme listesinden çıkarıldı',
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),
@@ -200,11 +209,22 @@ class _TVShowsPageState extends State<TVShowsPage> {
                                   ),
                                   child: IconButton(
                                     icon: Icon(
-                                      Icons.check_circle,
+                                      watchedList.contains(show['id'])
+                                          ? Icons.check_circle
+                                          : Icons.check_circle_outline,
                                       color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () {
                                       watchListProvider.toggleWatched(show['id']);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            watchedList.contains(show['id'])
+                                                ? 'İzlediklerimden çıkarıldı'
+                                                : 'İzlediklerime eklendi',
+                                          ),
+                                        ),
+                                      );
                                     },
                                   ),
                                 ),

@@ -205,24 +205,8 @@ class TMDBService {
           'append_to_response': 'credits,videos,similar,genres',
         },
       );
-
-      // Türleri çekelim
-      final genreResponse = await _dio.get(
-        '$_baseUrl/genre/movie/list',
-        queryParameters: {
-          'language': 'tr-TR',
-        },
-      );
-
-      // Response'a türleri ekleyelim
-      final data = response.data;
-      data['genre_names'] = (data['genres'] as List?)?.map((genre) {
-        final genreName = (genreResponse.data['genres'] as List)
-            .firstWhere((g) => g['id'] == genre['id'], orElse: () => {'name': ''})['name'];
-        return genreName;
-      }).toList();
-
-      return data;
+      print(response.data); // API yanıtını konsola yazdır
+      return response.data;
     } catch (e) {
       print('Error getting movie details: $e');
       return null;
